@@ -119,11 +119,7 @@ namespace BocceBall
 
             ////~:HOMEWORK REQUIREMENTS:~///////////////////////////////////
             //All the teams, with their win / loss record
-            var redTeamWins = 0;
-            var redTeamLosses = 0;
-            var blueTeamWins = 0;
-            var blueTeamLosses = 0;
-
+            
             var oldGames = db.Games.Where(w => w.Date < DateTime.Today);
 
             foreach (var game in oldGames)
@@ -131,8 +127,26 @@ namespace BocceBall
                 //determine winner
                 //associate win with team
                 //add to team record
+                Team away = game.AwayTeam;
+                Team home = game.HomeTeam;
+                if (game.HomeTeamScore > game.AwayTeamScore)
+                {
+                    home.Wins++;
+                    away.Losses++;
+                }
+                else if (game.HomeTeamScore < game.AwayTeamScore)
+                {
+                    away.Wins++;
+                    home.Losses++;
+                }
             }
-            //db.Games.Where(w => w.HomeTeamScore)
+            db.SaveChanges();
+
+            var allTeams = db.Teams;
+            foreach (Team team in allTeams)
+            {
+                Console.WriteLine($"{team.Color} team had {team.Wins} wins and {team.Losses} losses");
+            }
 
 
             //:All the Players and what team they are on://
