@@ -119,8 +119,8 @@ namespace BocceBall
 
             ////~:HOMEWORK REQUIREMENTS:~///////////////////////////////////
             //All the teams, with their win / loss record
-            
-            var oldGames = db.Games.Where(w => w.Date < DateTime.Today);
+
+            var oldGames = db.Games.Include(i => i.AwayTeam).Include(i => i.HomeTeam).Where(w => w.Date < DateTime.Today);
 
             foreach (var game in oldGames)
             {
@@ -129,6 +129,23 @@ namespace BocceBall
                 //add to team record
                 Team away = game.AwayTeam;
                 Team home = game.HomeTeam;
+                if (away.Wins == null)
+                {
+                    away.Wins = 0;
+                }
+                if (away.Losses == null)
+                {
+                    away.Losses = 0;
+                }
+                if (home.Wins == null)
+                {
+                    home.Wins = 0;
+                }
+                if (home.Losses == null)
+                {
+                    home.Losses = 0;
+                }
+
                 if (game.HomeTeamScore > game.AwayTeamScore)
                 {
                     home.Wins++;
@@ -166,19 +183,21 @@ namespace BocceBall
             }
 
 
-            //All the Upcoming games(games who Date Happened is in the future)
+            ////:All the Upcoming games(games who Date Happened is in the future):///
             var comingSoon = db.Games.Where(w => w.Date > DateTime.Today);
+            Console.WriteLine("Upcoming Games:");
             foreach (var game in comingSoon)
             {
-                Console.WriteLine($"{game.Date}: {game.HomeTeam} vs {game.AwayTeam}");
+                Console.WriteLine($"{game.Date}: {game.HomeTeam.Color} vs {game.AwayTeam.Color}");
             }
 
 
-            //Past games
+            ////:Past games://///
             var oldNews = db.Games.Where(w => w.Date < DateTime.Today);
+            Console.WriteLine("Past Games");
             foreach (var game in oldNews)
             {
-                Console.WriteLine($"{game.Date}: {game.HomeTeam} vs {game.AwayTeam} ");
+                Console.WriteLine($"{game.Date}: {game.HomeTeam.Color} vs {game.AwayTeam.Color} ");
             }
             Console.ReadLine();
         }
